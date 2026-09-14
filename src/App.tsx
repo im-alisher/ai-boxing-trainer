@@ -1,8 +1,9 @@
+import { PunchMetricsPanel } from '@/features/metrics/PunchMetricsPanel'
 import { PoseOverlay } from '@/features/pose/PoseOverlay'
-import { PunchFeed } from '@/features/punch/PunchFeed'
 import { WebcamView } from '@/features/webcam/WebcamView'
 import { usePoseDetection } from '@/hooks/usePoseDetection'
 import { usePunchDetection } from '@/hooks/usePunchDetection'
+import { usePunchMetrics } from '@/hooks/usePunchMetrics'
 import { useWebcam } from '@/hooks/useWebcam'
 
 function App() {
@@ -11,8 +12,11 @@ function App() {
 
   const isReady = webcam.status === 'ready'
 
+  const metrics = usePunchMetrics({ enabled: isReady })
+
   const { registerFrame, punches } = usePunchDetection({
     enabled: isReady,
+    onPunch: metrics.feed,
   })
 
   const {
@@ -36,24 +40,25 @@ function App() {
         </p>
       </header>
 
-      <div className="relative w-full shadow-2xl shadow-black/50">
-        <WebcamView webcam={webcam} />
-        {isReady && (
-          <PoseOverlay
-            landmarks={landmarks}
-            videoRef={videoRef}
-            className="absolute inset-0 rounded-2xl"
-          />
+      <div className="grid w-full gap-6 lg:grid-cols-[1fr_300px]">
+        <div className="relative w-full shadow-2xl shadow-black/50">
+          <WebcamView webcam={webcam} />
+          {isReady && (
+            <PoseOverlay
+              landmarks={landmarks}
+              videoRef={videoRef}
+              className="absolute inset-0 rounded-2xl"
+            />
+          )}
+        </div>
+
+        {poseStatus === 'error' && poseError !== null && (
+          <p className="max-w-md text-center text-sm text-amber-400">
+            Pose detection unavailable: {poseError}
+          </p>
         )}
+        <PunchMetricsPanel metrics={metrics.metrics} punches={punches} onReset={metrics.reset} />
       </div>
-
-      {poseStatus === 'error' && poseError !== null && (
-        <p className="max-w-md text-center text-sm text-amber-400">
-          Pose detection unavailable: {poseError}
-        </p>
-      )}
-
-      <PunchFeed punches={punches} />
     </main>
   )
 }
