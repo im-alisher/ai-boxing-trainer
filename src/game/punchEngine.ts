@@ -34,7 +34,9 @@ export function extractPunchFrame(
     !isVisible(leftWrist) ||
     !isVisible(rightWrist) ||
     !isVisible(leftShoulder) ||
-    !isVisible(rightShoulder)
+    !isVisible(rightShoulder) ||
+    !isVisible(leftElbow) ||
+    !isVisible(rightElbow)
   ) {
     return null
   }

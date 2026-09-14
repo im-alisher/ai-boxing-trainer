@@ -1,4 +1,4 @@
-import type { PunchEvent, PunchSide } from '@/types/punch'
+import type { PunchEvent, PunchSide, PunchType } from '@/types/punch'
 
 export interface PunchFeedProps {
   punches: PunchEvent[]
@@ -20,13 +20,33 @@ const SIDE_DOT: Record<PunchSide, string> = {
   right: 'bg-blue-400',
 }
 
+const TYPE_LABEL: Record<PunchType, string> = {
+  jab: 'JAB',
+  hook: 'HOOK',
+  uppercut: 'UPPERCUT',
+}
+
 function formatSpeed(speed: number): string {
   return `${speed.toFixed(1)}×/s`
 }
 
+interface CountCardProps {
+  count: number
+  label: string
+  accent: string
+}
+
+function CountCard({ count, label, accent }: CountCardProps) {
+  return (
+    <div className="rounded-lg bg-zinc-950/60 p-2">
+      <p className={`text-xl font-bold ${accent}`}>{count}</p>
+      <p className="text-xs text-zinc-500">{label}</p>
+    </div>
+  )
+}
+
 export function PunchFeed({ punches, className = '' }: PunchFeedProps) {
-  const leftCount = punches.filter((punch) => punch.side === 'left').length
-  const rightCount = punches.filter((punch) => punch.side === 'right').length
+  const countByType = (type: PunchType) => punches.filter((punch) => punch.type === type).length
 
   return (
     <aside
@@ -36,20 +56,15 @@ export function PunchFeed({ punches, className = '' }: PunchFeedProps) {
         Punch detection
       </h2>
 
-      <div className="grid grid-cols-2 gap-2 text-center">
-        <div className="rounded-lg bg-zinc-950/60 p-2">
-          <p className="text-xl font-bold text-red-400">{leftCount}</p>
-          <p className="text-xs text-zinc-500">Left jabs</p>
-        </div>
-        <div className="rounded-lg bg-zinc-950/60 p-2">
-          <p className="text-xl font-bold text-blue-400">{rightCount}</p>
-          <p className="text-xs text-zinc-500">Right jabs</p>
-        </div>
+      <div className="grid grid-cols-3 gap-2 text-center">
+        <CountCard count={countByType('jab')} label="Jabs" accent="text-amber-400" />
+        <CountCard count={countByType('hook')} label="Hooks" accent="text-emerald-400" />
+        <CountCard count={countByType('uppercut')} label="Uppercuts" accent="text-purple-400" />
       </div>
 
       <ul className="flex flex-col gap-1.5">
         {punches.length === 0 && (
-          <li className="text-center text-sm text-zinc-600">Throw a jab to see it here.</li>
+          <li className="text-center text-sm text-zinc-600">Throw a punch to see it here.</li>
         )}
         {punches.map((punch, index) => (
           <li
@@ -59,7 +74,7 @@ export function PunchFeed({ punches, className = '' }: PunchFeedProps) {
             <span className="flex items-center gap-2 text-sm font-medium">
               <span className={`size-2 rounded-full ${SIDE_DOT[punch.side]}`} />
               <span className={SIDE_COLORS[punch.side]}>{SIDE_LABEL[punch.side]}</span>
-              <span className="text-zinc-300">JAB</span>
+              <span className="text-zinc-300">{TYPE_LABEL[punch.type]}</span>
             </span>
             <span className="font-mono text-xs text-zinc-400">{formatSpeed(punch.speed)}</span>
           </li>
