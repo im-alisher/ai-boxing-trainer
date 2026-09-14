@@ -67,7 +67,7 @@ function App() {
         <div className="absolute right-[18%] top-[35%] size-[260px] animate-float-slow rounded-full bg-fuchsia-600/10 blur-[100px] [animation-delay:-3s]" />
       </div>
 
-      <header className="flex shrink-0 items-center justify-between gap-4 px-5 pb-3 pt-4 sm:px-8">
+      <header className="flex shrink-0 items-center justify-between gap-4 px-5 pb-2 pt-3 sm:px-8">
         <div className="flex items-center gap-3">
           <div className="relative flex size-9 items-center justify-center rounded-xl bg-gradient-to-br from-sky-500 to-violet-600 shadow-[0_8px_24px_-8px_rgba(56,189,248,0.8)]">
             <svg

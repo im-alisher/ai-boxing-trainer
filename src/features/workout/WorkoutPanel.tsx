@@ -33,118 +33,118 @@ function formatElapsed(ms: number): string {
 }
 
 function formatStartedAt(ms: number): string {
-  return new Date(ms).toLocaleString()
+  const d = new Date(ms)
+  return d.toLocaleString([], {
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
 }
 
 function formatSpeed(speed: number): string {
   return `${speed.toFixed(1)}×/s`
 }
 
-function SummaryRow({ label, value }: { label: string; value: string }) {
+function MiniStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between text-sm">
-      <span className="text-zinc-400">{label}</span>
-      <span className="font-semibold tabular-nums text-zinc-100">{value}</span>
+    <div className="rounded-lg border border-white/5 bg-white/[0.03] px-1.5 py-1 text-center">
+      <p className="text-sm font-black tabular-nums text-zinc-100">{value}</p>
+      <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500">{label}</p>
     </div>
   )
 }
 
 function WorkoutSummaryCard({ summary }: { summary: WorkoutSummary }) {
   return (
-    <div className="flex flex-col gap-2.5 rounded-2xl border border-white/10 bg-white/[0.03] p-3">
-      <div className="flex flex-col items-center gap-1">
-        <p className="text-3xl font-black tabular-nums text-gradient-shine">
+    <div className="flex flex-col gap-1.5 rounded-xl border border-white/10 bg-white/[0.03] p-2">
+      <div className="flex items-center justify-between">
+        <p className="text-sm font-bold text-emerald-300">Session complete</p>
+        <p className="font-mono text-base font-black tabular-nums text-gradient-shine">
           {formatElapsed(summary.durationMs)}
         </p>
-        <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">
-          Session complete
-        </p>
       </div>
-      <div className="h-px bg-white/5" />
-      <SummaryRow
-        label="Punches"
-        value={`${summary.totalPunches} (${summary.totalsBySide.left}L / ${summary.totalsBySide.right}R)`}
-      />
-      {(['jab', 'hook', 'uppercut'] as const).map((type) => (
-        <SummaryRow
-          key={type}
-          label={TYPE_LABEL[type]}
-          value={summary.totalsByType[type].toString()}
+      <div className="grid grid-cols-3 gap-1.5">
+        <MiniStat label="Punches" value={summary.totalPunches.toString()} />
+        <MiniStat
+          label="L / R"
+          value={`${summary.totalsBySide.left} / ${summary.totalsBySide.right}`}
         />
-      ))}
-      <SummaryRow
-        label="Avg speed"
-        value={summary.avgSpeed === null ? '—' : formatSpeed(summary.avgSpeed)}
-      />
-      <SummaryRow
-        label="Peak speed"
-        value={summary.peakSpeed === null ? '—' : formatSpeed(summary.peakSpeed)}
-      />
-      <SummaryRow label="Longest combo" value={summary.longestCombo.toString()} />
+        <MiniStat label="Combo" value={summary.longestCombo.toString()} />
+        <MiniStat
+          label="Avg"
+          value={summary.avgSpeed === null ? '—' : formatSpeed(summary.avgSpeed)}
+        />
+        <MiniStat
+          label="Peak"
+          value={summary.peakSpeed === null ? '—' : formatSpeed(summary.peakSpeed)}
+        />
+        <MiniStat
+          label="Jab/Hook/Up"
+          value={`${summary.totalsByType.jab}/${summary.totalsByType.hook}/${summary.totalsByType.uppercut}`}
+        />
+      </div>
     </div>
   )
 }
 
 function HistoryList({ history, onClear }: { history: WorkoutSummary[]; onClear: () => void }) {
+  const recent = history.slice(0, 2)
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-1.5">
       <div className="flex items-center justify-between">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">
-          Previous sessions
+        <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500">
+          Recent sessions
         </p>
         {history.length > 0 && (
           <button
             type="button"
             onClick={onClear}
-            className="rounded px-2 py-0.5 text-xs font-semibold text-zinc-500 transition-colors hover:text-zinc-300"
+            className="rounded px-1.5 py-0.5 text-[10px] font-semibold text-zinc-500 transition-colors hover:text-zinc-300"
           >
             Clear
           </button>
         )}
       </div>
-      {history.length === 0 && (
-        <p className="rounded-xl border border-dashed border-white/10 px-3 py-3 text-center text-sm text-zinc-500">
-          No sessions yet — finish one to save it.
+      {recent.length === 0 && (
+        <p className="rounded-lg border border-dashed border-white/10 px-2 py-2 text-center text-xs text-zinc-500">
+          No sessions yet — finish one to save it here.
         </p>
       )}
-      <ul className="flex max-h-52 flex-col gap-1.5 overflow-y-auto pr-1">
-        {history.map((entry) => (
-          <li key={entry.id} className="rounded-xl border border-white/5 bg-white/[0.03] px-3 py-2">
-            <div className="flex items-baseline justify-between">
-              <span className="text-sm text-zinc-300">{formatStartedAt(entry.startedAtMs)}</span>
-              <span className="font-mono text-xs tabular-nums text-zinc-500">
-                {formatElapsed(entry.durationMs)}
-              </span>
-            </div>
-            <div className="mt-1.5 flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                {(['jab', 'hook', 'uppercut'] as const).map((type) => (
-                  <span
-                    key={type}
-                    className="flex items-center gap-1 text-[11px] font-semibold text-zinc-400"
-                    title={TYPE_LABEL[type]}
-                  >
-                    <span className={`size-1.5 rounded-full ${TYPE_DOT[type]}`} />
-                    {entry.totalsByType[type]}
-                  </span>
-                ))}
-              </div>
-              <span className="font-mono text-[11px] tabular-nums text-zinc-500">
-                {entry.totalPunches} total
-              </span>
-            </div>
-          </li>
-        ))}
-      </ul>
+      {recent.map((entry) => (
+        <div
+          key={entry.id}
+          className="flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.03] px-2.5 py-1 text-xs"
+        >
+          <div className="flex items-center gap-2">
+            <span className="text-zinc-300">{formatStartedAt(entry.startedAtMs)}</span>
+            <span className="flex items-center gap-1.5">
+              {(['jab', 'hook', 'uppercut'] as const).map((type) => (
+                <span
+                  key={type}
+                  className="flex items-center gap-0.5 font-semibold text-zinc-400"
+                  title={TYPE_LABEL[type]}
+                >
+                  <span className={`size-1.5 rounded-full ${TYPE_DOT[type]}`} />
+                  {entry.totalsByType[type]}
+                </span>
+              ))}
+            </span>
+          </div>
+          <span className="font-mono tabular-nums text-zinc-500">
+            {formatElapsed(entry.durationMs)}
+          </span>
+        </div>
+      ))}
     </div>
   )
 }
 
 const CONTROL_STYLES = {
   primary:
-    'from-emerald-400 to-teal-500 text-emerald-950 shadow-[0_12px_30px_-12px_rgba(52,211,153,0.9)]',
+    'from-emerald-400 to-teal-500 text-emerald-950 shadow-[0_10px_26px_-12px_rgba(52,211,153,0.9)]',
   muted: 'bg-zinc-800/80 text-zinc-100 hover:bg-zinc-700/80',
-  danger: 'from-rose-500 to-red-500 text-white shadow-[0_12px_30px_-12px_rgba(244,63,94,0.9)]',
+  danger: 'from-rose-500 to-red-500 text-white shadow-[0_10px_26px_-12px_rgba(244,63,94,0.9)]',
 } as const
 
 function ControlButton({
@@ -183,7 +183,7 @@ function ControlButton({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`inline-flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-bold transition-all hover:brightness-110 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none bg-gradient-to-r ${CONTROL_STYLES[variant]}`}
+      className={`inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-bold transition-all hover:brightness-110 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none disabled:hover:brightness-100 ${variant === 'muted' ? '' : 'bg-gradient-to-r'} ${CONTROL_STYLES[variant]}`}
     >
       {icon && icons[icon]}
       {label}
@@ -210,62 +210,77 @@ export const WorkoutPanel = memo(function WorkoutPanel({
   const finished = isFinished(workout)
   const idle = workout.state === 'idle'
   const canFinish = running || paused
-
   const showSummary = finished && workout.lastSummary !== null
 
   return (
     <section className={`glass flex min-h-0 w-full flex-col rounded-3xl p-4 ${className}`}>
-      <div className="flex shrink-0 items-center gap-2 px-1">
-        <span className="size-2 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 shadow-[0_0_10px_rgba(52,211,153,0.8)]" />
-        <h2 className="text-xs font-bold uppercase tracking-[0.18em] text-zinc-300">
-          Workout session
-        </h2>
+      <div className="flex shrink-0 items-center justify-between gap-2 px-1">
+        <div className="flex items-center gap-2">
+          <span className="size-2 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 shadow-[0_0_10px_rgba(52,211,153,0.8)]" />
+          <h2 className="text-xs font-bold uppercase tracking-[0.18em] text-zinc-300">
+            Workout session
+          </h2>
+        </div>
+        <span className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
+          {running ? '● Running' : paused ? 'Paused' : finished ? 'Done' : 'Idle'}
+        </span>
       </div>
 
-      <div className="mt-4 flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto pr-0.5">
-        <div className="mt-3 flex flex-col items-center gap-3 rounded-2xl border border-white/5 bg-zinc-950/40 px-3 py-4">
-          <div className="flex flex-col items-center">
+      <div className="mt-3 flex min-h-0 flex-1 flex-col gap-3">
+        <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/5 bg-zinc-950/40 px-4 py-3">
+          <div className="flex flex-col">
             <p
-              className={`font-mono text-5xl font-black tabular-nums tracking-tight ${
+              className={`font-mono text-3xl font-black tabular-nums leading-none tracking-tight ${
                 running ? 'text-gradient-shine' : 'text-zinc-200'
               }`}
             >
               {idle ? '--:--' : formatElapsed(workout.elapsedMs)}
             </p>
-            <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-zinc-500">
+            <p className="mt-1 text-[9px] font-bold uppercase tracking-widest text-zinc-500">
               {running ? 'Round in progress' : idle ? 'Ready when you are' : 'Elapsed time'}
             </p>
           </div>
-
-          <div className="flex items-center gap-2">
-            {running ? (
-              <ControlButton label="Pause" icon="pause" variant="muted" onClick={onPause} />
-            ) : paused ? (
-              <ControlButton label="Resume" icon="play" variant="primary" onClick={onResume} />
-            ) : (
-              <ControlButton label="Start round" icon="play" variant="primary" onClick={onBegin} />
-            )}
-            {canFinish && (
-              <ControlButton label="Finish" icon="stop" variant="danger" onClick={onFinish} />
+          <div className="flex flex-col items-end gap-1.5">
+            <div className="flex items-center gap-1.5">
+              {running ? (
+                <ControlButton label="Pause" icon="pause" variant="muted" onClick={onPause} />
+              ) : paused ? (
+                <ControlButton label="Resume" icon="play" variant="primary" onClick={onResume} />
+              ) : (
+                <ControlButton label="Start" icon="play" variant="primary" onClick={onBegin} />
+              )}
+              {canFinish && (
+                <ControlButton label="Finish" icon="stop" variant="danger" onClick={onFinish} />
+              )}
+            </div>
+            {running && workout.metrics.totalCount > 0 && (
+              <p className="font-mono text-[11px] tabular-nums text-zinc-400">
+                <span className="font-bold text-amber-300">{workout.metrics.totalCount}</span>{' '}
+                punches
+                {workout.metrics.currentCombo > 1 && (
+                  <>
+                    {' · '}combo{' '}
+                    <span className="font-bold text-orange-300">
+                      {workout.metrics.currentCombo}
+                    </span>
+                  </>
+                )}
+                {workout.metrics.punchesPerMinute > 0 && (
+                  <>
+                    {' · '}pace{' '}
+                    <span className="font-bold text-emerald-300">
+                      {workout.metrics.punchesPerMinute}/m
+                    </span>
+                  </>
+                )}
+              </p>
             )}
           </div>
         </div>
 
-        {running && workout.metrics.totalCount > 0 && (
-          <div className="mt-2 flex items-center justify-between rounded-xl border border-white/5 bg-white/[0.03] px-3 py-2 text-sm">
-            <span className="text-zinc-400">Session punches</span>
-            <span className="font-mono font-bold tabular-nums text-amber-300">
-              {workout.metrics.totalCount}
-              <span className="ml-2 text-xs font-semibold text-zinc-500">
-                combo {workout.metrics.currentCombo}
-              </span>
-            </span>
-          </div>
-        )}
-
         {showSummary && <WorkoutSummaryCard summary={workout.lastSummary as WorkoutSummary} />}
 
-        <div className="mt-3 rounded-xl border border-white/5 bg-white/[0.03] px-3 py-2 text-sm">
+        <div className="flex min-h-0 flex-1 flex-col justify-end gap-1.5">
           <HistoryList history={history} onClear={onClearHistory} />
         </div>
       </div>
