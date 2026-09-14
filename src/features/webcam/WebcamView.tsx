@@ -44,29 +44,65 @@ function StateCard({
   busy = false,
 }: StateCardProps) {
   return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center gap-5 bg-zinc-950/85 p-6 text-center backdrop-blur-md">
-      {busy ? (
-        <div className="relative size-16">
-          <div className="absolute inset-0 animate-spin rounded-full border-2 border-white/10 border-t-sky-400" />
-          <div className="absolute inset-2 rounded-full bg-sky-400/10" />
-        </div>
-      ) : (
-        <div className="flex size-16 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-zinc-300 shadow-[0_8px_30px_-10px_rgba(56,189,248,0.6)]">
-          <CameraIcon />
-        </div>
-      )}
-      <div className="flex flex-col gap-1">
-        <h2 className="text-xl font-bold text-white">{title}</h2>
-        <p className="max-w-sm text-sm text-zinc-400">{description}</p>
+    <div className="camera-state absolute inset-0 flex flex-col items-center justify-center gap-5 p-6 text-center">
+      <div className="ring-art" aria-hidden="true">
+        <span className="ring-word">
+          ROUND
+          <br />
+          ONE.
+        </span>
+        <svg viewBox="0 0 460 350" fill="none">
+          <defs>
+            <linearGradient
+              id="ring-floor"
+              x1="80"
+              y1="150"
+              x2="360"
+              y2="330"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stopColor="#fa713c" />
+              <stop offset="1" stopColor="#94361d" />
+            </linearGradient>
+          </defs>
+          <path d="M40 218 231 125 426 215 234 321Z" fill="url(#ring-floor)" />
+          <path d="M40 218v18l194 96 192-98v-19L234 311Z" fill="#602c20" />
+          <path d="m58 216 175-81 173 80-173 85Z" stroke="#ffc7a3" strokeOpacity=".5" />
+          <g stroke="#f3e9d2" strokeWidth="3" strokeLinejoin="round">
+            <path d="M44 149 231 61 422 150 234 244Z" />
+            <path d="M44 171 231 83 422 172 234 266Z" />
+            <path d="M44 194 231 106 422 195 234 289Z" />
+          </g>
+          <g strokeWidth="10" strokeLinecap="round">
+            <path d="M44 140v80M231 50v78" stroke="#acafa5" />
+            <path d="M422 142v78M234 235v82" stroke="#ff7845" />
+          </g>
+          <path d="m189 205 41-20 44 20-42 21Z" fill="#f5e8cd" fillOpacity=".85" />
+          <path d="m218 203 13-6 14 6-13 7Z" fill="#be502b" />
+        </svg>
+        <span className="ring-note">YOUR SPACE IS YOUR ARENA</span>
       </div>
-      <button
-        type="button"
-        onClick={onAction}
-        disabled={disabled}
-        className="mt-1 rounded-xl bg-gradient-to-r from-sky-500 to-violet-600 px-6 py-2.5 text-sm font-bold text-white shadow-[0_10px_28px_-10px_rgba(56,189,248,0.8)] transition-all hover:brightness-110 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
-      >
-        {actionLabel}
-      </button>
+      <div className="camera-state-content">
+        <span className="camera-kicker">WELCOME TO YOUR CORNER</span>
+        {busy ? (
+          <div className="relative size-16">
+            <div className="absolute inset-0 animate-spin rounded-full border-2 border-white/10 border-t-sky-400" />
+            <div className="absolute inset-2 rounded-full bg-sky-400/10" />
+          </div>
+        ) : (
+          <div className="camera-icon">
+            <CameraIcon />
+          </div>
+        )}
+        <div className="flex flex-col gap-1">
+          <h2 className="text-xl font-bold text-white">{title}</h2>
+          <p className="max-w-sm text-sm text-zinc-400">{description}</p>
+        </div>
+        <button type="button" onClick={onAction} disabled={disabled} className="camera-action">
+          {actionLabel}
+          <span aria-hidden="true"> &#8599;</span>
+        </button>
+      </div>
     </div>
   )
 }
@@ -123,8 +159,8 @@ export function WebcamView({ className = '', mirror = true, webcam }: WebcamView
 
       {!isReady && status === 'idle' && (
         <StateCard
-          title="Camera off"
-          description="Start the webcam to step into the ring."
+          title="Ready to throw?"
+          description="Camera on. Hands up. Let your next round begin."
           actionLabel="Start camera"
           onAction={() => void start()}
         />
@@ -133,7 +169,7 @@ export function WebcamView({ className = '', mirror = true, webcam }: WebcamView
       {!isReady && status === 'stopped' && (
         <StateCard
           title="Camera stopped"
-          description="Your session is paused. Step back in any time."
+          description="Your camera is off. Restart it when you are ready."
           actionLabel="Restart camera"
           onAction={() => void start()}
         />
