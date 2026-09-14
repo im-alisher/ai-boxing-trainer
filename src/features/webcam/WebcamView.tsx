@@ -1,9 +1,11 @@
 import { useEffect } from 'react'
 import { useWebcam } from '@/hooks/useWebcam'
+import type { UseWebcamResult } from '@/hooks/useWebcam'
 
 export interface WebcamViewProps {
   className?: string
   mirror?: boolean
+  webcam?: UseWebcamResult
 }
 
 interface StateCardProps {
@@ -60,8 +62,9 @@ function StateCard({
   )
 }
 
-export function WebcamView({ className = '', mirror = true }: WebcamViewProps) {
-  const { videoRef, stream, status, error, start, stop } = useWebcam()
+export function WebcamView({ className = '', mirror = true, webcam }: WebcamViewProps) {
+  const ownWebcam = useWebcam()
+  const { videoRef, stream, status, error, start, stop } = webcam ?? ownWebcam
 
   useEffect(() => {
     const video = videoRef.current
