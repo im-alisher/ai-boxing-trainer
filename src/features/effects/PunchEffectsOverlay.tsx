@@ -109,14 +109,17 @@ export const PunchEffectsOverlay = memo(function PunchEffectsOverlay({
 
         ctx.strokeStyle = TYPE_COLOR[seed.type]
         ctx.lineWidth = 3
+        ctx.shadowColor = TYPE_COLOR[seed.type]
+        ctx.shadowBlur = 18
         ctx.beginPath()
         ctx.arc(centerX, centerY, ringRadius, 0, Math.PI * 2)
         ctx.stroke()
+        ctx.shadowBlur = 0
 
         ctx.fillStyle = TYPE_COLOR[seed.type]
-        ctx.globalAlpha = (1 - progress) * 0.18
+        ctx.globalAlpha = (1 - progress) * 0.22
         ctx.beginPath()
-        ctx.arc(centerX, centerY, ringRadius * 0.7, 0, Math.PI * 2)
+        ctx.arc(centerX, centerY, ringRadius * 0.72, 0, Math.PI * 2)
         ctx.fill()
 
         ctx.globalAlpha = (1 - progress) * 0.9

@@ -24,9 +24,9 @@ export function createCoverMapper(
   }
 }
 
-const LEFT_JOINT_COLOR = '#ef4444'
-const RIGHT_JOINT_COLOR = '#3b82f6'
-const NEUTRAL_COLOR = '#a1a1aa'
+const LEFT_JOINT_COLOR = '#fb7185'
+const RIGHT_JOINT_COLOR = '#38bdf8'
+const NEUTRAL_COLOR = '#d4d4d8'
 
 const LEFT_SIDE_INDICES = new Set<number>([
   POSE_LANDMARK.LEFT_SHOULDER,
@@ -96,7 +96,8 @@ export function drawPoseSkeleton(
   const toX = (point: { x: number }) => mapper.toCanvasX(mirror ? 1 - point.x : point.x)
   const toY = (point: { y: number }) => mapper.toCanvasY(point.y)
 
-  ctx.lineWidth = 3
+  ctx.lineWidth = 3.5
+  ctx.shadowBlur = 10
   for (const [from, to] of POSE_CONNECTIONS) {
     const fromPoint = landmarks[from]
     const toPoint = landmarks[to]
@@ -108,7 +109,9 @@ export function drawPoseSkeleton(
     ) {
       continue
     }
-    ctx.strokeStyle = connectionColor(from, to)
+    const color = connectionColor(from, to)
+    ctx.strokeStyle = color
+    ctx.shadowColor = color
     ctx.beginPath()
     ctx.moveTo(toX(fromPoint), toY(fromPoint))
     ctx.lineTo(toX(toPoint), toY(toPoint))
@@ -121,13 +124,22 @@ export function drawPoseSkeleton(
     if (point === undefined || !isVisible(point)) {
       continue
     }
+    const color = jointColor(index)
+    const x = toX(point)
+    const y = toY(point)
+
+    ctx.shadowBlur = 14
+    ctx.shadowColor = color
     ctx.beginPath()
-    ctx.arc(toX(point), toY(point), jointRadius, 0, Math.PI * 2)
-    ctx.fillStyle = jointColor(index)
+    ctx.arc(x, y, jointRadius, 0, Math.PI * 2)
+    ctx.fillStyle = color
     ctx.fill()
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)'
-    ctx.lineWidth = 1.5
-    ctx.stroke()
+
+    ctx.shadowBlur = 0
+    ctx.beginPath()
+    ctx.arc(x, y, jointRadius * 0.45, 0, Math.PI * 2)
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.92)'
+    ctx.fill()
   }
 
   ctx.restore()
