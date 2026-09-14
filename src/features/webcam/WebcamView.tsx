@@ -91,7 +91,7 @@ export function WebcamView({ className = '', mirror = true, webcam }: WebcamView
   const isRequesting = status === 'requesting'
 
   return (
-    <div className={`relative aspect-video w-full overflow-hidden bg-zinc-950 ${className}`}>
+    <div className={`relative h-full w-full overflow-hidden bg-zinc-950 ${className}`}>
       <video
         ref={videoRef}
         autoPlay

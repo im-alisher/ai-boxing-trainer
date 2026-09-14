@@ -214,58 +214,60 @@ export const WorkoutPanel = memo(function WorkoutPanel({
   const showSummary = finished && workout.lastSummary !== null
 
   return (
-    <section className={`glass w-full rounded-3xl p-4 ${className}`}>
-      <div className="flex items-center gap-2 px-1">
+    <section className={`glass flex min-h-0 w-full flex-col rounded-3xl p-4 ${className}`}>
+      <div className="flex shrink-0 items-center gap-2 px-1">
         <span className="size-2 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 shadow-[0_0_10px_rgba(52,211,153,0.8)]" />
         <h2 className="text-xs font-bold uppercase tracking-[0.18em] text-zinc-300">
           Workout session
         </h2>
       </div>
 
-      <div className="mt-3 flex flex-col items-center gap-3 rounded-2xl border border-white/5 bg-zinc-950/40 px-3 py-4">
-        <div className="flex flex-col items-center">
-          <p
-            className={`font-mono text-5xl font-black tabular-nums tracking-tight ${
-              running ? 'text-gradient-shine' : 'text-zinc-200'
-            }`}
-          >
-            {idle ? '--:--' : formatElapsed(workout.elapsedMs)}
-          </p>
-          <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-zinc-500">
-            {running ? 'Round in progress' : idle ? 'Ready when you are' : 'Elapsed time'}
-          </p>
+      <div className="mt-4 flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto pr-0.5">
+        <div className="mt-3 flex flex-col items-center gap-3 rounded-2xl border border-white/5 bg-zinc-950/40 px-3 py-4">
+          <div className="flex flex-col items-center">
+            <p
+              className={`font-mono text-5xl font-black tabular-nums tracking-tight ${
+                running ? 'text-gradient-shine' : 'text-zinc-200'
+              }`}
+            >
+              {idle ? '--:--' : formatElapsed(workout.elapsedMs)}
+            </p>
+            <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-zinc-500">
+              {running ? 'Round in progress' : idle ? 'Ready when you are' : 'Elapsed time'}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            {running ? (
+              <ControlButton label="Pause" icon="pause" variant="muted" onClick={onPause} />
+            ) : paused ? (
+              <ControlButton label="Resume" icon="play" variant="primary" onClick={onResume} />
+            ) : (
+              <ControlButton label="Start round" icon="play" variant="primary" onClick={onBegin} />
+            )}
+            {canFinish && (
+              <ControlButton label="Finish" icon="stop" variant="danger" onClick={onFinish} />
+            )}
+          </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          {running ? (
-            <ControlButton label="Pause" icon="pause" variant="muted" onClick={onPause} />
-          ) : paused ? (
-            <ControlButton label="Resume" icon="play" variant="primary" onClick={onResume} />
-          ) : (
-            <ControlButton label="Start round" icon="play" variant="primary" onClick={onBegin} />
-          )}
-          {canFinish && (
-            <ControlButton label="Finish" icon="stop" variant="danger" onClick={onFinish} />
-          )}
-        </div>
-      </div>
-
-      {running && workout.metrics.totalCount > 0 && (
-        <div className="mt-2 flex items-center justify-between rounded-xl border border-white/5 bg-white/[0.03] px-3 py-2 text-sm">
-          <span className="text-zinc-400">Session punches</span>
-          <span className="font-mono font-bold tabular-nums text-amber-300">
-            {workout.metrics.totalCount}
-            <span className="ml-2 text-xs font-semibold text-zinc-500">
-              combo {workout.metrics.currentCombo}
+        {running && workout.metrics.totalCount > 0 && (
+          <div className="mt-2 flex items-center justify-between rounded-xl border border-white/5 bg-white/[0.03] px-3 py-2 text-sm">
+            <span className="text-zinc-400">Session punches</span>
+            <span className="font-mono font-bold tabular-nums text-amber-300">
+              {workout.metrics.totalCount}
+              <span className="ml-2 text-xs font-semibold text-zinc-500">
+                combo {workout.metrics.currentCombo}
+              </span>
             </span>
-          </span>
+          </div>
+        )}
+
+        {showSummary && <WorkoutSummaryCard summary={workout.lastSummary as WorkoutSummary} />}
+
+        <div className="mt-3 rounded-xl border border-white/5 bg-white/[0.03] px-3 py-2 text-sm">
+          <HistoryList history={history} onClear={onClearHistory} />
         </div>
-      )}
-
-      {showSummary && <WorkoutSummaryCard summary={workout.lastSummary as WorkoutSummary} />}
-
-      <div className="mt-3">
-        <HistoryList history={history} onClear={onClearHistory} />
       </div>
     </section>
   )

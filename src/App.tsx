@@ -60,49 +60,76 @@ function App() {
   }, [landmarks])
 
   return (
-    <main className="relative mx-auto flex min-h-full w-full max-w-6xl flex-col items-center gap-8 px-5 py-8 sm:px-8">
+    <main className="relative flex min-h-screen flex-col overflow-y-auto lg:h-screen lg:overflow-hidden">
       <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
         <div className="absolute -top-32 right-[-10%] size-[420px] animate-float-slow rounded-full bg-violet-600/20 blur-[120px]" />
         <div className="absolute bottom-[-15%] left-[-8%] size-[380px] animate-float-slow rounded-full bg-sky-500/15 blur-[110px] [animation-delay:-7s]" />
         <div className="absolute right-[18%] top-[35%] size-[260px] animate-float-slow rounded-full bg-fuchsia-600/10 blur-[100px] [animation-delay:-3s]" />
       </div>
 
-      <header className="flex flex-col items-center gap-3 text-center">
-        <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-zinc-300 backdrop-blur">
-          <span className="size-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.9)]" />
-          Powered by local AI
-        </span>
-        <h1 className="text-4xl font-black tracking-tight sm:text-5xl">
-          <span className="text-gradient-shine">AI BOXING TRAINER</span>
-        </h1>
-        <p className="max-w-xl text-sm leading-relaxed text-zinc-400">
-          Real-time computer vision coaching — punches, combos and pace, detected entirely in your
-          browser.
-        </p>
+      <header className="flex shrink-0 items-center justify-between gap-4 px-5 pb-3 pt-4 sm:px-8">
+        <div className="flex items-center gap-3">
+          <div className="relative flex size-9 items-center justify-center rounded-xl bg-gradient-to-br from-sky-500 to-violet-600 shadow-[0_8px_24px_-8px_rgba(56,189,248,0.8)]">
+            <svg
+              viewBox="0 0 24 24"
+              className="size-5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M9.5 11.5a3.5 3.5 0 0 0 3.5 3.5c.83 0 1.5.67 1.5 1.5v1.7a2 2 0 0 1-2 2h-.6a2 2 0 0 1-1.94-1.48 3.02 3.02 0 0 0-5.9.4V19a2 2 0 0 1-2-2v-1.2a2 2 0 0 1 2-2h1.5c.83 0 1.5-.67 1.5-1.5a3.5 3.5 0 0 0 3.5-3.5c0-.83.67-1.5 1.5-1.5h1.35a2 2 0 0 1 1.72.99l.38.66a2 2 0 0 0 2.9.74l.28-.2a2 2 0 0 1 2.44 0l.28.2a2 2 0 0 0 2.9-.74l.38-.66a2 2 0 0 1 1.72-.99H23" />
+            </svg>
+          </div>
+          <div className="flex flex-col">
+            <h1 className="text-lg font-black uppercase leading-none tracking-tight sm:text-xl">
+              <span className="text-gradient-shine">Boxing Trainer</span>
+            </h1>
+            <p className="mt-1 text-[11px] font-medium uppercase tracking-[0.16em] text-zinc-500">
+              Local AI · Real-time coaching
+            </p>
+          </div>
+        </div>
+        <div className="hidden items-center gap-2 sm:flex">
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[11px] font-semibold text-emerald-300 backdrop-blur">
+            <span className="relative flex size-2">
+              <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex size-2 rounded-full bg-emerald-400" />
+            </span>
+            All punches run on-device
+          </span>
+          <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[11px] font-semibold text-zinc-300 backdrop-blur">
+            100% private
+          </span>
+        </div>
       </header>
 
-      <div className="grid w-full gap-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start">
-        <div className="relative w-full">
-          <div className="stage-glow overflow-hidden rounded-3xl border border-white/10 bg-zinc-950">
-            <div className="pointer-events-none absolute inset-0 hud-grid" />
-            <div className="pointer-events-none absolute inset-0 scan-line opacity-60" />
-            <WebcamView webcam={webcam} className="rounded-none" />
-            {isReady && (
-              <PoseOverlay
-                landmarks={landmarks}
-                videoRef={videoRef}
-                className="absolute inset-0 z-10"
-              />
-            )}
-            {isReady && (
-              <PunchEffectsOverlay
-                impacts={punchEffects.impacts}
-                videoRef={videoRef}
-                className="absolute inset-0 z-10"
-              />
-            )}
-            {isReady && <PunchHud metrics={metrics.metrics} lastPunch={punches[0] ?? null} />}
-            <PerfOverlay perf={perf} />
+      <div className="flex min-h-0 flex-1 flex-col gap-4 px-5 pb-4 sm:px-8 lg:flex-row">
+        <div className="flex min-h-0 flex-1 flex-col lg:items-center lg:justify-center">
+          <div className="relative w-full lg:h-full lg:w-auto lg:max-h-full lg:max-w-full">
+            <div className="stage-glow relative mx-auto aspect-video w-full max-h-full max-w-full overflow-hidden rounded-3xl border border-white/10 bg-zinc-950 lg:h-full lg:w-auto">
+              <div className="pointer-events-none absolute inset-0 hud-grid" />
+              <div className="pointer-events-none absolute inset-0 scan-line opacity-60" />
+              <WebcamView webcam={webcam} className="rounded-none" />
+              {isReady && (
+                <PoseOverlay
+                  landmarks={landmarks}
+                  videoRef={videoRef}
+                  className="absolute inset-0 z-10"
+                />
+              )}
+              {isReady && (
+                <PunchEffectsOverlay
+                  impacts={punchEffects.impacts}
+                  videoRef={videoRef}
+                  className="absolute inset-0 z-10"
+                />
+              )}
+              {isReady && <PunchHud metrics={metrics.metrics} lastPunch={punches[0] ?? null} />}
+              <PerfOverlay perf={perf} />
+            </div>
           </div>
 
           {poseStatus === 'error' && poseError !== null && (
@@ -112,7 +139,7 @@ function App() {
           )}
         </div>
 
-        <div className="flex w-full flex-col gap-5">
+        <aside className="flex min-h-0 w-full shrink-0 flex-col gap-4 lg:h-full lg:w-[360px]">
           <WorkoutPanel
             workout={workout.workout}
             history={workout.history}
@@ -121,15 +148,26 @@ function App() {
             onResume={workout.resume}
             onFinish={workout.finish}
             onClearHistory={workout.clearHistory}
+            className="lg:min-h-0 lg:flex-1"
           />
-          <PunchMetricsPanel metrics={metrics.metrics} punches={punches} onReset={metrics.reset} />
-        </div>
+          <PunchMetricsPanel
+            metrics={metrics.metrics}
+            punches={punches}
+            onReset={metrics.reset}
+            className="lg:min-h-0 lg:flex-1"
+          />
+        </aside>
       </div>
 
-      <footer className="flex flex-col items-center gap-1 text-center text-xs text-zinc-600">
-        <p>Your camera stays on your device — nothing is uploaded or stored on any server.</p>
-        <p className="font-mono">100% local · MIT licensed · open source</p>
+      <footer className="pointer-events-none absolute inset-x-0 bottom-2 hidden shrink-0 justify-center lg:flex">
+        <p className="font-mono text-[11px] text-zinc-600">
+          Camera stays on your device — nothing is uploaded · 100% local · MIT licensed · open
+          source
+        </p>
       </footer>
+      <p className="pb-4 text-center font-mono text-[11px] text-zinc-600 lg:hidden">
+        Camera stays on your device — nothing is uploaded · 100% local · open source
+      </p>
     </main>
   )
 }

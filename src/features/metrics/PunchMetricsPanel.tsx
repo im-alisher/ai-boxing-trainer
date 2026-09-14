@@ -99,8 +99,8 @@ export const PunchMetricsPanel = memo(function PunchMetricsPanel({
     metrics.lastPunchType !== null && metrics.lastPunchSide !== null ? metrics.lastPunchSide : null
 
   return (
-    <section className={`glass flex w-full flex-col gap-4 rounded-3xl p-4 ${className}`}>
-      <div className="flex items-center justify-between px-1">
+    <section className={`glass flex min-h-0 w-full flex-col rounded-3xl p-4 ${className}`}>
+      <div className="flex shrink-0 items-center justify-between px-1">
         <div className="flex items-center gap-2">
           <span className="size-2 rounded-full bg-gradient-to-br from-sky-400 to-violet-500 shadow-[0_0_10px_rgba(56,189,248,0.8)]" />
           <h2 className="text-xs font-bold uppercase tracking-[0.18em] text-zinc-300">
@@ -116,116 +116,120 @@ export const PunchMetricsPanel = memo(function PunchMetricsPanel({
         </button>
       </div>
 
-      <div className="grid grid-cols-3 gap-2">
-        <StatCard label="Punches" value={total} gradient="from-sky-400 to-violet-500" />
-        <StatCard
-          label="Combo"
-          value={metrics.currentCombo}
-          gradient="from-orange-400 to-rose-500"
-        />
-        <StatCard
-          label="Pace"
-          value={metrics.punchesPerMinute}
-          unit="/m"
-          gradient="from-emerald-400 to-teal-500"
-        />
-      </div>
-
-      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-3">
-        <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-zinc-500">
-          Punch types
-        </p>
-        <div className="flex flex-col gap-2.5">
-          {(['jab', 'hook', 'uppercut'] as const).map((type) => (
-            <div key={type}>
-              <div className="mb-1 flex items-center justify-between text-xs">
-                <span className={`font-semibold ${TYPE_TEXT[type]}`}>{TYPE_LABEL[type]}</span>
-                <span className="font-mono tabular-nums text-zinc-400">
-                  {totals[type]} · {countToPercent(totals[type], total)}
-                </span>
-              </div>
-              <div className="h-2 overflow-hidden rounded-full bg-white/5">
-                <div
-                  className={`h-full rounded-full bg-gradient-to-r ${TYPE_GRADIENT[type]} transition-all duration-500`}
-                  style={{ width: countToPercent(totals[type], Math.max(total, 1)) }}
-                />
-              </div>
-            </div>
-          ))}
+      <div className="mt-4 flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto pr-0.5">
+        <div className="grid grid-cols-3 gap-2">
+          <StatCard label="Punches" value={total} gradient="from-sky-400 to-violet-500" />
+          <StatCard
+            label="Combo"
+            value={metrics.currentCombo}
+            gradient="from-orange-400 to-rose-500"
+          />
+          <StatCard
+            label="Pace"
+            value={metrics.punchesPerMinute}
+            unit="/m"
+            gradient="from-emerald-400 to-teal-500"
+          />
         </div>
-      </div>
 
-      <div className="grid grid-cols-2 gap-2">
-        {(['left', 'right'] as PunchSide[]).map((side) => {
-          const count = side === 'left' ? leftTotal : rightTotal
-          const isDominant = dominantSide === side && count > 0
-          return (
-            <div key={side} className="rounded-2xl border border-white/10 bg-white/[0.03] p-3">
-              <div className="flex items-center justify-between">
-                <span className={`text-xs font-bold ${SIDE_TEXT[side]}`}>{SIDE_LABEL[side]}</span>
-                <span className="font-mono text-sm font-bold tabular-nums text-zinc-200">
-                  {count}
-                </span>
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-3">
+          <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-zinc-500">
+            Punch types
+          </p>
+          <div className="flex flex-col gap-2.5">
+            {(['jab', 'hook', 'uppercut'] as const).map((type) => (
+              <div key={type}>
+                <div className="mb-1 flex items-center justify-between text-xs">
+                  <span className={`font-semibold ${TYPE_TEXT[type]}`}>{TYPE_LABEL[type]}</span>
+                  <span className="font-mono tabular-nums text-zinc-400">
+                    {totals[type]} · {countToPercent(totals[type], total)}
+                  </span>
+                </div>
+                <div className="h-2 overflow-hidden rounded-full bg-white/5">
+                  <div
+                    className={`h-full rounded-full bg-gradient-to-r ${TYPE_GRADIENT[type]} transition-all duration-500`}
+                    style={{ width: countToPercent(totals[type], Math.max(total, 1)) }}
+                  />
+                </div>
               </div>
-              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/5">
-                <div
-                  className={`h-full rounded-full bg-gradient-to-r ${SIDE_GRADIENT[side]} transition-all duration-500 ${isDominant ? 'shadow-[0_0_10px_rgba(255,255,255,0.35)]' : ''}`}
-                  style={{ width: `${(count / maxSide) * 100}%` }}
-                />
+            ))}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          {(['left', 'right'] as PunchSide[]).map((side) => {
+            const count = side === 'left' ? leftTotal : rightTotal
+            const isDominant = dominantSide === side && count > 0
+            return (
+              <div key={side} className="rounded-2xl border border-white/10 bg-white/[0.03] p-3">
+                <div className="flex items-center justify-between">
+                  <span className={`text-xs font-bold ${SIDE_TEXT[side]}`}>{SIDE_LABEL[side]}</span>
+                  <span className="font-mono text-sm font-bold tabular-nums text-zinc-200">
+                    {count}
+                  </span>
+                </div>
+                <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/5">
+                  <div
+                    className={`h-full rounded-full bg-gradient-to-r ${SIDE_GRADIENT[side]} transition-all duration-500 ${isDominant ? 'shadow-[0_0_10px_rgba(255,255,255,0.35)]' : ''}`}
+                    style={{ width: `${(count / maxSide) * 100}%` }}
+                  />
+                </div>
               </div>
-            </div>
-          )
-        })}
-      </div>
-
-      <div className="grid grid-cols-2 gap-2 rounded-2xl border border-white/10 bg-white/[0.03] p-3">
-        <div>
-          <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">
-            Last punch
-          </p>
-          <p className="mt-1 flex items-center gap-2 text-sm font-bold text-zinc-200">
-            <span
-              className={`size-2 rounded-full ${last !== null ? SIDE_DOT[last] : 'bg-zinc-600'}`}
-            />
-            {metrics.lastPunchType !== null
-              ? `${TYPE_LABEL[metrics.lastPunchType]} · ${SIDE_LABEL[metrics.lastPunchSide ?? 'left']}`
-              : '—'}
-          </p>
+            )
+          })}
         </div>
-        <div className="text-right">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">
-            Peak speed
-          </p>
-          <p className="mt-1 font-mono text-sm font-bold tabular-nums text-zinc-200">
-            {metrics.peakSpeed === null ? '—' : formatSpeed(metrics.peakSpeed)}
-          </p>
-        </div>
-      </div>
 
-      <ul className="flex max-h-44 flex-col gap-1.5 overflow-y-auto pr-1">
-        {punches.length === 0 && (
-          <li className="rounded-xl border border-dashed border-white/10 px-3 py-4 text-center text-sm text-zinc-500">
-            Throw a punch to see it here.
-          </li>
-        )}
-        {punches.map((punch, index) => (
-          <li
-            key={`${punch.timestampMs}-${punch.side}-${index}`}
-            className="flex items-center justify-between rounded-xl border border-white/5 bg-white/[0.03] px-3 py-2"
-          >
-            <span className="flex items-center gap-2.5 text-sm font-bold">
+        <div className="grid grid-cols-2 gap-2 rounded-2xl border border-white/10 bg-white/[0.03] p-3">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">
+              Last punch
+            </p>
+            <p className="mt-1 flex items-center gap-2 text-sm font-bold text-zinc-200">
               <span
-                className={`size-2 rounded-full ${SIDE_DOT[punch.side]} shadow-[0_0_8px_1px_rgba(255,255,255,0.15)]`}
+                className={`size-2 rounded-full ${last !== null ? SIDE_DOT[last] : 'bg-zinc-600'}`}
               />
-              <span className={SIDE_TEXT[punch.side]}>{SIDE_LABEL[punch.side].toUpperCase()}</span>
-              <span className="text-zinc-300">{TYPE_LABEL[punch.type]}</span>
-            </span>
-            <span className="font-mono text-xs tabular-nums text-zinc-400">
-              {formatSpeed(punch.speed)}
-            </span>
-          </li>
-        ))}
-      </ul>
+              {metrics.lastPunchType !== null
+                ? `${TYPE_LABEL[metrics.lastPunchType]} · ${SIDE_LABEL[metrics.lastPunchSide ?? 'left']}`
+                : '—'}
+            </p>
+          </div>
+          <div className="text-right">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">
+              Peak speed
+            </p>
+            <p className="mt-1 font-mono text-sm font-bold tabular-nums text-zinc-200">
+              {metrics.peakSpeed === null ? '—' : formatSpeed(metrics.peakSpeed)}
+            </p>
+          </div>
+        </div>
+
+        <ul className="flex max-h-44 flex-col gap-1.5 overflow-y-auto pr-1">
+          {punches.length === 0 && (
+            <li className="rounded-xl border border-dashed border-white/10 px-3 py-4 text-center text-sm text-zinc-500">
+              Throw a punch to see it here.
+            </li>
+          )}
+          {punches.map((punch, index) => (
+            <li
+              key={`${punch.timestampMs}-${punch.side}-${index}`}
+              className="flex items-center justify-between rounded-xl border border-white/5 bg-white/[0.03] px-3 py-2"
+            >
+              <span className="flex items-center gap-2.5 text-sm font-bold">
+                <span
+                  className={`size-2 rounded-full ${SIDE_DOT[punch.side]} shadow-[0_0_8px_1px_rgba(255,255,255,0.15)]`}
+                />
+                <span className={SIDE_TEXT[punch.side]}>
+                  {SIDE_LABEL[punch.side].toUpperCase()}
+                </span>
+                <span className="text-zinc-300">{TYPE_LABEL[punch.type]}</span>
+              </span>
+              <span className="font-mono text-xs tabular-nums text-zinc-400">
+                {formatSpeed(punch.speed)}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
     </section>
   )
 })
