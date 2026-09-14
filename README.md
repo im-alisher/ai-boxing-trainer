@@ -4,6 +4,8 @@ A real-time computer vision boxing coach powered entirely by local AI.
 
 Runs 100% in the browser. No paid APIs. No cloud AI services. No backend.
 
+Released under the [MIT License](LICENSE).
+
 ## Stack
 
 - React 19 + TypeScript (strict)

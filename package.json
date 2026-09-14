@@ -3,6 +3,7 @@
   "description": "Real-time computer vision boxing coach powered entirely by local AI",
   "private": true,
   "version": "0.1.0",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "vite",
