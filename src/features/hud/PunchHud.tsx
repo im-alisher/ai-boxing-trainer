@@ -30,6 +30,12 @@ const TYPE_RING: Record<PunchType, string> = {
   uppercut: 'ring-purple-400/70',
 }
 
+const FLASH_RGBA: Record<PunchType, string> = {
+  jab: 'rgba(251, 191, 36, 0.16)',
+  hook: 'rgba(52, 211, 153, 0.16)',
+  uppercut: 'rgba(167, 139, 250, 0.16)',
+}
+
 function formatSpeed(speed: number): string {
   return `${speed.toFixed(1)}×/s`
 }
@@ -41,6 +47,13 @@ export function PunchHud({ metrics, lastPunch, className = '' }: PunchHudProps) 
 
   return (
     <div className={`pointer-events-none absolute inset-0 select-none text-white ${className}`}>
+      {punch !== null && (
+        <div
+          key={`flash-${punch.timestampMs}`}
+          className="absolute inset-0 animate-hud-flash"
+          style={{ backgroundColor: FLASH_RGBA[punch.type] }}
+        />
+      )}
       <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-black/50 to-transparent" />
       <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/60 to-transparent" />
 

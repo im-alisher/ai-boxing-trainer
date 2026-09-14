@@ -1,3 +1,5 @@
+import { PunchEffectsOverlay } from '@/features/effects/PunchEffectsOverlay'
+import { usePunchEffects } from '@/features/effects/usePunchEffects'
 import { PunchHud } from '@/features/hud/PunchHud'
 import { PunchMetricsPanel } from '@/features/metrics/PunchMetricsPanel'
 import { PoseOverlay } from '@/features/pose/PoseOverlay'
@@ -8,8 +10,9 @@ import { usePunchDetection } from '@/hooks/usePunchDetection'
 import { usePunchMetrics } from '@/hooks/usePunchMetrics'
 import { useWebcam } from '@/hooks/useWebcam'
 import { useWorkout } from '@/hooks/useWorkout'
+import { useCallback, useEffect, useRef } from 'react'
+import type { PoseLandmarkArray } from '@/types/pose'
 import type { PunchEvent } from '@/types/punch'
-import { useCallback } from 'react'
 
 function App() {
   const webcam = useWebcam()
@@ -19,13 +22,17 @@ function App() {
 
   const metrics = usePunchMetrics({ enabled: isReady })
   const workout = useWorkout()
+  const punchEffects = usePunchEffects()
+
+  const landmarksRef = useRef<PoseLandmarkArray | null>(null)
 
   const handlePunch = useCallback(
     (event: PunchEvent) => {
       metrics.feed(event)
       workout.feed(event)
+      punchEffects.register(event.side, event.type, landmarksRef.current)
     },
-    [metrics, workout],
+    [metrics, punchEffects, workout],
   )
 
   const { registerFrame, punches } = usePunchDetection({
@@ -45,6 +52,10 @@ function App() {
     },
   })
 
+  useEffect(() => {
+    landmarksRef.current = landmarks
+  }, [landmarks])
+
   return (
     <main className="mx-auto flex min-h-full max-w-3xl flex-col items-center gap-6 p-6">
       <header className="flex flex-col items-center gap-2 text-center">
@@ -60,6 +71,13 @@ function App() {
           {isReady && (
             <PoseOverlay
               landmarks={landmarks}
+              videoRef={videoRef}
+              className="absolute inset-0 rounded-2xl"
+            />
+          )}
+          {isReady && (
+            <PunchEffectsOverlay
+              impacts={punchEffects.impacts}
               videoRef={videoRef}
               className="absolute inset-0 rounded-2xl"
             />
