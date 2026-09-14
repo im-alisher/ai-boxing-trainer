@@ -11,7 +11,7 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "smoke": "tsx --tsconfig tsconfig.app.json scripts/punchDetector.smoke.ts && tsx --tsconfig tsconfig.app.json scripts/metricsTracker.smoke.ts",
+    "smoke": "tsx --tsconfig tsconfig.app.json scripts/punchDetector.smoke.ts && tsx --tsconfig tsconfig.app.json scripts/metricsTracker.smoke.ts && tsx --tsconfig tsconfig.app.json scripts/workoutSession.smoke.ts",
     "preview": "vite preview"
   },
   "dependencies": {

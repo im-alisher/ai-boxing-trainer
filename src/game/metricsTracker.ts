@@ -18,6 +18,7 @@ export interface PunchMetricsSnapshot {
   lastPunchType: PunchType | null
   lastPunchSide: PunchSide | null
   lastSpeed: number | null
+  avgSpeed: number | null
   peakSpeed: number | null
   currentCombo: number
   longestCombo: number
@@ -34,6 +35,7 @@ export const EMPTY_METRICS: PunchMetricsSnapshot = {
   lastPunchType: null,
   lastPunchSide: null,
   lastSpeed: null,
+  avgSpeed: null,
   peakSpeed: null,
   currentCombo: 0,
   longestCombo: 0,
@@ -55,6 +57,7 @@ export class PunchMetricsTracker {
   private lastPunchType: PunchType | null = null
   private lastPunchSide: PunchSide | null = null
   private lastSpeed: number | null = null
+  private speedSum = 0
   private peakSpeed: number | null = null
   private currentCombo = 0
   private longestCombo = 0
@@ -73,6 +76,7 @@ export class PunchMetricsTracker {
     this.lastPunchType = event.type
     this.lastPunchSide = event.side
     this.lastSpeed = event.speed
+    this.speedSum += event.speed
     this.peakSpeed = this.peakSpeed === null ? event.speed : Math.max(this.peakSpeed, event.speed)
 
     const gap =
@@ -111,6 +115,7 @@ export class PunchMetricsTracker {
       lastPunchType: this.lastPunchType,
       lastPunchSide: this.lastPunchSide,
       lastSpeed: this.lastSpeed,
+      avgSpeed: this.totalCount === 0 ? null : this.speedSum / this.totalCount,
       peakSpeed: this.peakSpeed,
       currentCombo: this.currentCombo,
       longestCombo: this.longestCombo,
@@ -128,6 +133,7 @@ export class PunchMetricsTracker {
     this.lastPunchType = null
     this.lastPunchSide = null
     this.lastSpeed = null
+    this.speedSum = 0
     this.peakSpeed = null
     this.currentCombo = 0
     this.longestCombo = 0

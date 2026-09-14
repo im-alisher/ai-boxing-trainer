@@ -1,10 +1,14 @@
 import { PunchMetricsPanel } from '@/features/metrics/PunchMetricsPanel'
 import { PoseOverlay } from '@/features/pose/PoseOverlay'
 import { WebcamView } from '@/features/webcam/WebcamView'
+import { WorkoutPanel } from '@/features/workout/WorkoutPanel'
 import { usePoseDetection } from '@/hooks/usePoseDetection'
 import { usePunchDetection } from '@/hooks/usePunchDetection'
 import { usePunchMetrics } from '@/hooks/usePunchMetrics'
 import { useWebcam } from '@/hooks/useWebcam'
+import { useWorkout } from '@/hooks/useWorkout'
+import type { PunchEvent } from '@/types/punch'
+import { useCallback } from 'react'
 
 function App() {
   const webcam = useWebcam()
@@ -13,10 +17,19 @@ function App() {
   const isReady = webcam.status === 'ready'
 
   const metrics = usePunchMetrics({ enabled: isReady })
+  const workout = useWorkout()
+
+  const handlePunch = useCallback(
+    (event: PunchEvent) => {
+      metrics.feed(event)
+      workout.feed(event)
+    },
+    [metrics, workout],
+  )
 
   const { registerFrame, punches } = usePunchDetection({
     enabled: isReady,
-    onPunch: metrics.feed,
+    onPunch: handlePunch,
   })
 
   const {
@@ -52,12 +65,23 @@ function App() {
           )}
         </div>
 
-        {poseStatus === 'error' && poseError !== null && (
-          <p className="max-w-md text-center text-sm text-amber-400">
-            Pose detection unavailable: {poseError}
-          </p>
-        )}
-        <PunchMetricsPanel metrics={metrics.metrics} punches={punches} onReset={metrics.reset} />
+        <div className="flex w-full flex-col gap-6">
+          {poseStatus === 'error' && poseError !== null && (
+            <p className="max-w-md text-center text-sm text-amber-400">
+              Pose detection unavailable: {poseError}
+            </p>
+          )}
+          <WorkoutPanel
+            workout={workout.workout}
+            history={workout.history}
+            onBegin={workout.begin}
+            onPause={workout.pause}
+            onResume={workout.resume}
+            onFinish={workout.finish}
+            onClearHistory={workout.clearHistory}
+          />
+          <PunchMetricsPanel metrics={metrics.metrics} punches={punches} onReset={metrics.reset} />
+        </div>
       </div>
     </main>
   )
