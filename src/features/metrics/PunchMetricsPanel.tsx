@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import type { PunchEvent, PunchSide, PunchType } from '@/types/punch'
 import type { PunchMetricsSnapshot } from '@/game/metricsTracker'
 
@@ -79,7 +80,7 @@ function SideTally({ totals }: SideTallyProps) {
   )
 }
 
-export function PunchMetricsPanel({
+export const PunchMetricsPanel = memo(function PunchMetricsPanel({
   metrics,
   punches,
   onReset,
@@ -176,4 +177,4 @@ export function PunchMetricsPanel({
       </ul>
     </aside>
   )
-}
+})

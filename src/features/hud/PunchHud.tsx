@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import type { PunchEvent, PunchSide, PunchType } from '@/types/punch'
 import type { PunchMetricsSnapshot } from '@/game/metricsTracker'
 
@@ -40,7 +41,11 @@ function formatSpeed(speed: number): string {
   return `${speed.toFixed(1)}×/s`
 }
 
-export function PunchHud({ metrics, lastPunch, className = '' }: PunchHudProps) {
+export const PunchHud = memo(function PunchHud({
+  metrics,
+  lastPunch,
+  className = '',
+}: PunchHudProps) {
   const punch = lastPunch
   const combo = metrics.currentCombo
   const hot = combo >= 3
@@ -118,4 +123,4 @@ export function PunchHud({ metrics, lastPunch, className = '' }: PunchHudProps) 
       )}
     </div>
   )
-}
+})

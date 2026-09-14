@@ -2,6 +2,7 @@ import { PunchEffectsOverlay } from '@/features/effects/PunchEffectsOverlay'
 import { usePunchEffects } from '@/features/effects/usePunchEffects'
 import { PunchHud } from '@/features/hud/PunchHud'
 import { PunchMetricsPanel } from '@/features/metrics/PunchMetricsPanel'
+import { PerfOverlay } from '@/features/perf/PerfOverlay'
 import { PoseOverlay } from '@/features/pose/PoseOverlay'
 import { WebcamView } from '@/features/webcam/WebcamView'
 import { WorkoutPanel } from '@/features/workout/WorkoutPanel'
@@ -44,9 +45,11 @@ function App() {
     landmarks,
     status: poseStatus,
     error: poseError,
+    perf,
   } = usePoseDetection({
     videoRef,
     enabled: isReady,
+    maxFps: 30,
     onFrame: (next) => {
       registerFrame(next, performance.now())
     },
@@ -89,6 +92,7 @@ function App() {
               className="rounded-2xl"
             />
           )}
+          <PerfOverlay perf={perf} className="rounded-lg" />
         </div>
 
         <div className="flex w-full flex-col gap-6">

@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import type { PunchType } from '@/types/punch'
 import type { WorkoutSnapshot, WorkoutSummary } from '@/game/workoutSession'
 
@@ -152,7 +153,7 @@ function isFinished(workout: WorkoutSnapshot): boolean {
   return workout.state === 'finished'
 }
 
-export function WorkoutPanel({
+export const WorkoutPanel = memo(function WorkoutPanel({
   workout,
   history,
   onBegin,
@@ -219,4 +220,4 @@ export function WorkoutPanel({
       <HistoryList history={history} onClear={onClearHistory} />
     </aside>
   )
-}
+})

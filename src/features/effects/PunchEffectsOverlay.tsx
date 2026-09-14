@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 import type { RefObject } from 'react'
 import { IMPACT_LIFETIME_MS } from '@/features/effects/usePunchEffects'
 import type { ImpactSeed } from '@/features/effects/usePunchEffects'
@@ -23,7 +23,7 @@ interface CanvasSize {
   height: number
 }
 
-export function PunchEffectsOverlay({
+export const PunchEffectsOverlay = memo(function PunchEffectsOverlay({
   impacts,
   videoRef,
   mirror = true,
@@ -141,4 +141,4 @@ export function PunchEffectsOverlay({
   }, [mirror, videoRef])
 
   return <canvas ref={canvasRef} className={`pointer-events-none ${className}`} />
-}
+})
