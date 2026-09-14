@@ -108,8 +108,8 @@ function App() {
 
       <div className="flex min-h-0 flex-1 flex-col gap-4 px-5 pb-4 sm:px-8 lg:flex-row">
         <div className="flex min-h-0 flex-1 flex-col lg:items-center lg:justify-center">
-          <div className="relative w-full lg:h-full lg:w-auto lg:max-h-full lg:max-w-full">
-            <div className="stage-glow relative mx-auto aspect-video w-full max-h-full max-w-full overflow-hidden rounded-3xl border border-white/10 bg-zinc-950 lg:h-full lg:w-auto">
+          <div className="relative w-full lg:h-full">
+            <div className="stage-glow relative mx-auto aspect-video w-full max-h-full max-w-full overflow-hidden rounded-3xl border border-white/10 bg-zinc-950 lg:h-auto lg:w-auto lg:max-h-[72%]">
               <div className="pointer-events-none absolute inset-0 hud-grid" />
               <div className="pointer-events-none absolute inset-0 scan-line opacity-60" />
               <WebcamView webcam={webcam} className="rounded-none" />
@@ -139,7 +139,7 @@ function App() {
           )}
         </div>
 
-        <aside className="flex min-h-0 w-full shrink-0 flex-col gap-4 lg:h-full lg:w-[360px]">
+        <aside className="flex min-h-0 w-full shrink-0 flex-col gap-4 lg:h-full lg:w-[460px]">
           <WorkoutPanel
             workout={workout.workout}
             history={workout.history}
