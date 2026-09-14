@@ -6,11 +6,14 @@
     sans-serif;
   --font-mono:
     'JetBrains Mono', ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace;
-}
 
-@theme {
   --animate-hud-pop: hud-pop 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   --animate-hud-flash: hud-flash 0.9s ease-out;
+  --animate-float-slow: float-slow 14s ease-in-out infinite;
+  --animate-pulse-soft: pulse-soft 2.4s ease-in-out infinite;
+  --animate-glow: glow 3s ease-in-out infinite;
+  --animate-shine: shine 2.6s linear infinite;
+  --animate-scan: scan 8s linear infinite;
 
   @keyframes hud-pop {
     from {
@@ -31,23 +34,156 @@
       opacity: 0;
     }
   }
+
+  @keyframes float-slow {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+    50% {
+      transform: translate3d(6%, 8%, 0) scale(1.12);
+    }
+  }
+
+  @keyframes pulse-soft {
+    0%,
+    100% {
+      opacity: 0.9;
+    }
+    50% {
+      opacity: 0.45;
+    }
+  }
+
+  @keyframes glow {
+    0%,
+    100% {
+      box-shadow:
+        0 0 22px 2px rgba(56, 189, 248, 0.25),
+        0 0 60px -18px rgba(168, 85, 247, 0.5);
+    }
+    50% {
+      box-shadow:
+        0 0 34px 4px rgba(56, 189, 248, 0.4),
+        0 0 80px -14px rgba(168, 85, 247, 0.7);
+    }
+  }
+
+  @keyframes shine {
+    from {
+      background-position: 200% center;
+    }
+    to {
+      background-position: -200% center;
+    }
+  }
+
+  @keyframes scan {
+    from {
+      background-position: 0 0;
+    }
+    to {
+      background-position: 0 80px;
+    }
+  }
 }
 
-:root {
-  color-scheme: dark;
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    color: #fafafa;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #09090b;
+    background-image:
+      radial-gradient(1200px 600px at 85% -10%, rgba(124, 58, 237, 0.14), transparent 60%),
+      radial-gradient(1000px 500px at -10% 110%, rgba(14, 165, 233, 0.12), transparent 60%),
+      radial-gradient(700px 420px at 50% 120%, rgba(236, 72, 153, 0.08), transparent 60%);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+  }
+
+  ::selection {
+    background-color: rgba(168, 85, 247, 0.4);
+  }
 }
 
-html,
-body,
-#root {
-  height: 100%;
-}
+@layer utilities {
+  .text-gradient {
+    background-image: linear-gradient(120deg, #22d3ee 0%, #818cf8 45%, #e879f9 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+  }
 
-body {
-  margin: 0;
-  background-color: #0a0a0b;
-  color: #fafafa;
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  .text-gradient-shine {
+    background-image: linear-gradient(
+      110deg,
+      #7dd3fc 0%,
+      #c4b5fd 30%,
+      #f0abfc 50%,
+      #c4b5fd 70%,
+      #7dd3fc 100%
+    );
+    background-size: 200% auto;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    animation: shine 5s linear infinite;
+  }
+
+  .glass {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(14px);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.06),
+      0 20px 50px -24px rgba(0, 0, 0, 0.8);
+  }
+
+  .glass-strong {
+    background: linear-gradient(180deg, rgba(24, 24, 27, 0.82), rgba(9, 9, 11, 0.9));
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(16px);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.06),
+      0 24px 60px -24px rgba(0, 0, 0, 0.9);
+  }
+
+  .stage-glow {
+    animation: glow 3.6s ease-in-out infinite;
+  }
+
+  .hud-grid {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+    background-size: 34px 34px;
+    mask-image: radial-gradient(ellipse at center, black 40%, transparent 78%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 78%);
+  }
+
+  .scan-line {
+    background-image: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(56, 189, 248, 0.05) 48%,
+      rgba(56, 189, 248, 0.14) 50%,
+      rgba(56, 189, 248, 0.05) 52%,
+      transparent 100%
+    );
+    background-size: 100% 80px;
+    animation: scan 8s linear infinite;
+  }
 }

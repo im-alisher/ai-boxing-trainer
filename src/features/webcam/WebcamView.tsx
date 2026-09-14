@@ -17,6 +17,24 @@ interface StateCardProps {
   busy?: boolean
 }
 
+function CameraIcon() {
+  return (
+    <svg
+      className="size-7"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M2.5 9.5A2.5 2.5 0 0 1 5 7h7a2.5 2.5 0 0 1 2.5 2.5v5A2.5 2.5 0 0 1 12 17H5a2.5 2.5 0 0 1-2.5-2.5v-5Z" />
+      <path d="m14.5 9.8 4.2-2.1a1 1 0 0 1 1.45.9v6.8a1 1 0 0 1-1.45.9l-4.2-2.1" />
+    </svg>
+  )
+}
+
 function StateCard({
   title,
   description,
@@ -26,35 +44,26 @@ function StateCard({
   busy = false,
 }: StateCardProps) {
   return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-zinc-950/80 p-6 text-center backdrop-blur-sm">
+    <div className="absolute inset-0 flex flex-col items-center justify-center gap-5 bg-zinc-950/85 p-6 text-center backdrop-blur-md">
       {busy ? (
-        <div className="size-10 animate-spin rounded-full border-2 border-zinc-600 border-t-red-500" />
+        <div className="relative size-16">
+          <div className="absolute inset-0 animate-spin rounded-full border-2 border-white/10 border-t-sky-400" />
+          <div className="absolute inset-2 rounded-full bg-sky-400/10" />
+        </div>
       ) : (
-        <div className="flex size-10 items-center justify-center rounded-full bg-zinc-800 text-zinc-400">
-          <svg
-            className="size-5"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 1 1 16 0Z" />
-            <circle cx="12" cy="10" r="3" />
-          </svg>
+        <div className="flex size-16 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-zinc-300 shadow-[0_8px_30px_-10px_rgba(56,189,248,0.6)]">
+          <CameraIcon />
         </div>
       )}
       <div className="flex flex-col gap-1">
-        <h2 className="text-lg font-semibold text-white">{title}</h2>
+        <h2 className="text-xl font-bold text-white">{title}</h2>
         <p className="max-w-sm text-sm text-zinc-400">{description}</p>
       </div>
       <button
         type="button"
         onClick={onAction}
         disabled={disabled}
-        className="mt-1 rounded-lg bg-red-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-500 disabled:cursor-not-allowed disabled:opacity-50"
+        className="mt-1 rounded-xl bg-gradient-to-r from-sky-500 to-violet-600 px-6 py-2.5 text-sm font-bold text-white shadow-[0_10px_28px_-10px_rgba(56,189,248,0.8)] transition-all hover:brightness-110 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
       >
         {actionLabel}
       </button>
@@ -82,9 +91,7 @@ export function WebcamView({ className = '', mirror = true, webcam }: WebcamView
   const isRequesting = status === 'requesting'
 
   return (
-    <div
-      className={`relative aspect-video w-full overflow-hidden rounded-2xl bg-zinc-950 ${className}`}
-    >
+    <div className={`relative aspect-video w-full overflow-hidden bg-zinc-950 ${className}`}>
       <video
         ref={videoRef}
         autoPlay
@@ -93,17 +100,31 @@ export function WebcamView({ className = '', mirror = true, webcam }: WebcamView
         className={`h-full w-full object-cover ${mirror ? '-scale-x-100' : ''}`}
       />
 
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-zinc-950/40 via-transparent to-zinc-950/20" />
+
       {isReady && (
-        <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full bg-zinc-900/80 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
-          <span className="size-2 animate-pulse rounded-full bg-red-500" />
-          LIVE
-        </div>
+        <>
+          <div className="absolute left-5 top-5 z-20 flex items-center gap-2 rounded-full border border-white/10 bg-zinc-950/70 px-3.5 py-1.5 text-xs font-bold tracking-wider text-white backdrop-blur-md">
+            <span className="relative flex size-2">
+              <span className="absolute inline-flex size-full animate-ping rounded-full bg-red-500 opacity-75" />
+              <span className="relative inline-flex size-2 rounded-full bg-red-500" />
+            </span>
+            LIVE
+          </div>
+          <button
+            type="button"
+            onClick={stop}
+            className="absolute right-5 top-5 z-20 rounded-full border border-white/10 bg-zinc-950/70 px-4 py-1.5 text-xs font-semibold text-zinc-200 backdrop-blur-md transition-all hover:border-rose-400/40 hover:text-rose-200"
+          >
+            Stop camera
+          </button>
+        </>
       )}
 
       {!isReady && status === 'idle' && (
         <StateCard
           title="Camera off"
-          description="Start the webcam to begin your boxing workout."
+          description="Start the webcam to step into the ring."
           actionLabel="Start camera"
           onAction={() => void start()}
         />
@@ -112,7 +133,7 @@ export function WebcamView({ className = '', mirror = true, webcam }: WebcamView
       {!isReady && status === 'stopped' && (
         <StateCard
           title="Camera stopped"
-          description="Your session is paused. Start the camera to resume."
+          description="Your session is paused. Step back in any time."
           actionLabel="Restart camera"
           onAction={() => void start()}
         />
@@ -137,16 +158,6 @@ export function WebcamView({ className = '', mirror = true, webcam }: WebcamView
           onAction={() => void start()}
           disabled={isRequesting}
         />
-      )}
-
-      {isReady && (
-        <button
-          type="button"
-          onClick={stop}
-          className="absolute right-4 top-4 rounded-lg bg-zinc-900/80 px-4 py-1.5 text-xs font-semibold text-white backdrop-blur-sm transition-colors hover:bg-zinc-800"
-        >
-          Stop camera
-        </button>
       )}
     </div>
   )
