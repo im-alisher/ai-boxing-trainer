@@ -56,16 +56,19 @@ function StatCard({
   value,
   unit,
   gradient,
+  glow,
 }: {
   label: string
   value: number | string
   unit?: string
   gradient: string
+  glow: string
 }) {
   return (
-    <div className="relative overflow-hidden rounded-xl border border-white/10 bg-white/[0.03] px-2 py-1.5 text-center">
-      <div className={`absolute inset-x-0 top-0 h-px bg-gradient-to-r ${gradient}`} />
-      <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500">{label}</p>
+    <div
+      className={`relative overflow-hidden rounded-xl border bg-white/[0.04] px-2 py-1.5 text-center ${gradient} ${glow}`}
+    >
+      <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-400">{label}</p>
       <p className="text-xl font-black tabular-nums leading-tight text-white">
         {value}
         {unit && <span className="ml-0.5 text-[11px] font-bold text-zinc-400">{unit}</span>}
@@ -102,8 +105,21 @@ export const PunchMetricsPanel = memo(function PunchMetricsPanel({
     <section className={`glass flex min-h-0 w-full flex-col rounded-3xl p-4 ${className}`}>
       <div className="flex shrink-0 items-center justify-between px-1">
         <div className="flex items-center gap-2">
-          <span className="size-2 rounded-full bg-gradient-to-br from-sky-400 to-violet-500 shadow-[0_0_10px_rgba(56,189,248,0.8)]" />
-          <h2 className="text-xs font-bold uppercase tracking-[0.18em] text-zinc-300">
+          <span className="flex size-5 items-center justify-center rounded-md bg-gradient-to-br from-sky-400 to-violet-500 shadow-[0_0_14px_-2px_rgba(56,189,248,0.8)]">
+            <svg
+              viewBox="0 0 24 24"
+              className="size-3 text-zinc-950"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+            </svg>
+          </span>
+          <h2 className="text-xs font-bold uppercase tracking-[0.18em] text-zinc-200">
             Live metrics
           </h2>
         </div>
@@ -118,22 +134,29 @@ export const PunchMetricsPanel = memo(function PunchMetricsPanel({
 
       <div className="mt-3 flex min-h-0 flex-1 flex-col gap-3">
         <div className="grid grid-cols-3 gap-1.5">
-          <StatCard label="Punches" value={total} gradient="from-sky-400 to-violet-500" />
+          <StatCard
+            label="Punches"
+            value={total}
+            gradient="border-sky-400/30 bg-sky-500/10"
+            glow="shadow-[0_8px_24px_-10px_rgba(56,189,248,0.6)]"
+          />
           <StatCard
             label="Combo"
             value={metrics.currentCombo}
-            gradient="from-orange-400 to-rose-500"
+            gradient="border-orange-400/30 bg-orange-500/10"
+            glow="shadow-[0_8px_24px_-10px_rgba(251,146,60,0.6)]"
           />
           <StatCard
             label="Pace"
             value={metrics.punchesPerMinute}
             unit="/m"
-            gradient="from-emerald-400 to-teal-500"
+            gradient="border-emerald-400/30 bg-emerald-500/10"
+            glow="shadow-[0_8px_24px_-10px_rgba(52,211,153,0.6)]"
           />
         </div>
 
-        <div className="rounded-xl border border-white/10 bg-white/[0.03] p-2.5">
-          <p className="mb-1.5 text-[9px] font-bold uppercase tracking-widest text-zinc-500">
+        <div className="rounded-xl border border-amber-400/15 bg-white/[0.03] p-2.5">
+          <p className="mb-1.5 text-[9px] font-bold uppercase tracking-widest text-amber-300/70">
             Punch types
           </p>
           <div className="flex flex-col gap-1.5">
@@ -161,7 +184,12 @@ export const PunchMetricsPanel = memo(function PunchMetricsPanel({
             const count = side === 'left' ? leftTotal : rightTotal
             const isDominant = dominantSide === side && count > 0
             return (
-              <div key={side} className="rounded-xl border border-white/10 bg-white/[0.03] p-2">
+              <div
+                key={side}
+                className={`rounded-xl border bg-white/[0.03] p-2 ${
+                  side === 'left' ? 'border-rose-400/15' : 'border-sky-400/15'
+                }`}
+              >
                 <div className="flex items-center justify-between">
                   <span className={`text-[11px] font-bold uppercase ${SIDE_TEXT[side]}`}>
                     {SIDE_LABEL[side]}
@@ -183,9 +211,9 @@ export const PunchMetricsPanel = memo(function PunchMetricsPanel({
           })}
         </div>
 
-        <div className="grid grid-cols-2 gap-1.5 rounded-xl border border-white/10 bg-white/[0.03] p-2.5">
+        <div className="grid grid-cols-2 gap-1.5 rounded-xl border border-violet-400/15 bg-white/[0.03] p-2.5">
           <div>
-            <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500">
+            <p className="text-[9px] font-bold uppercase tracking-widest text-violet-300/70">
               Last punch
             </p>
             <p className="mt-0.5 flex items-center gap-1.5 text-xs font-bold text-zinc-200">
@@ -208,7 +236,7 @@ export const PunchMetricsPanel = memo(function PunchMetricsPanel({
         </div>
 
         <div className="flex min-h-0 flex-1 flex-col gap-1">
-          <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500">
+          <p className="text-[9px] font-bold uppercase tracking-widest text-sky-300/70">
             Recent punches
           </p>
           {recent.length === 0 && (
@@ -219,12 +247,13 @@ export const PunchMetricsPanel = memo(function PunchMetricsPanel({
           {recent.map((punch, index) => (
             <div
               key={`${punch.timestampMs}-${punch.side}-${index}`}
-              className="flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.03] px-2.5 py-1 text-xs"
+              className={`flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.03] px-2.5 py-1 text-xs ${
+                punch.side === 'left'
+                  ? 'border-l-2 border-l-rose-400'
+                  : 'border-l-2 border-l-sky-400'
+              }`}
             >
               <span className="flex items-center gap-2 font-bold">
-                <span
-                  className={`size-1.5 rounded-full ${SIDE_DOT[punch.side]} shadow-[0_0_8px_1px_rgba(255,255,255,0.15)]`}
-                />
                 <span className={SIDE_TEXT[punch.side]}>
                   {SIDE_LABEL[punch.side].toUpperCase()}
                 </span>

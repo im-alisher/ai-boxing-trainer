@@ -61,6 +61,7 @@ function App() {
 
   return (
     <main className="relative flex min-h-screen flex-col overflow-y-auto lg:h-screen lg:overflow-hidden">
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-50 h-1 bg-gradient-to-r from-amber-400 via-rose-500 via-50% to-sky-400" />
       <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
         <div className="absolute -top-32 right-[-10%] size-[420px] animate-float-slow rounded-full bg-violet-600/20 blur-[120px]" />
         <div className="absolute bottom-[-15%] left-[-8%] size-[380px] animate-float-slow rounded-full bg-sky-500/15 blur-[110px] [animation-delay:-7s]" />
@@ -109,26 +110,31 @@ function App() {
       <div className="flex min-h-0 flex-1 flex-col gap-4 px-5 pb-4 sm:px-8 lg:flex-row">
         <div className="flex min-h-0 flex-1 flex-col lg:items-center lg:justify-center">
           <div className="relative w-full lg:h-full">
-            <div className="stage-glow relative mx-auto aspect-video w-full max-h-full max-w-full overflow-hidden rounded-3xl border border-white/10 bg-zinc-950 lg:h-auto lg:w-auto lg:max-h-[72%]">
-              <div className="pointer-events-none absolute inset-0 hud-grid" />
-              <div className="pointer-events-none absolute inset-0 scan-line opacity-60" />
-              <WebcamView webcam={webcam} className="rounded-none" />
-              {isReady && (
-                <PoseOverlay
-                  landmarks={landmarks}
-                  videoRef={videoRef}
-                  className="absolute inset-0 z-10"
-                />
-              )}
-              {isReady && (
-                <PunchEffectsOverlay
-                  impacts={punchEffects.impacts}
-                  videoRef={videoRef}
-                  className="absolute inset-0 z-10"
-                />
-              )}
-              {isReady && <PunchHud metrics={metrics.metrics} lastPunch={punches[0] ?? null} />}
-              <PerfOverlay perf={perf} />
+            <div className="relative mx-auto aspect-video w-full max-h-full max-w-full overflow-hidden rounded-[1.6rem] p-[3px] lg:h-auto lg:w-auto lg:max-h-[72%]">
+              <div className="absolute left-1/2 top-1/2 aspect-square w-[170%] -translate-x-1/2 -translate-y-1/2">
+                <div className="h-full w-full animate-spin-slower rounded-full bg-[conic-gradient(#fbbf24,#f43f5e,#8b5cf6,#38bdf8,#34d399,#fbbf24)] opacity-90" />
+              </div>
+              <div className="stage-glow relative h-full w-full overflow-hidden rounded-[calc(1.6rem-3px)] bg-zinc-950">
+                <div className="pointer-events-none absolute inset-0 hud-grid" />
+                <div className="pointer-events-none absolute inset-0 scan-line opacity-60" />
+                <WebcamView webcam={webcam} className="rounded-none" />
+                {isReady && (
+                  <PoseOverlay
+                    landmarks={landmarks}
+                    videoRef={videoRef}
+                    className="absolute inset-0 z-10"
+                  />
+                )}
+                {isReady && (
+                  <PunchEffectsOverlay
+                    impacts={punchEffects.impacts}
+                    videoRef={videoRef}
+                    className="absolute inset-0 z-10"
+                  />
+                )}
+                {isReady && <PunchHud metrics={metrics.metrics} lastPunch={punches[0] ?? null} />}
+                <PerfOverlay perf={perf} />
+              </div>
             </div>
           </div>
 

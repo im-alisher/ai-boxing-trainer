@@ -114,7 +114,7 @@ function HistoryList({ history, onClear }: { history: WorkoutSummary[]; onClear:
       {recent.map((entry) => (
         <div
           key={entry.id}
-          className="flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.03] px-2.5 py-1 text-xs"
+          className="flex items-center justify-between rounded-lg border border-white/5 border-l-2 border-l-emerald-400 bg-white/[0.03] px-2.5 py-1 text-xs"
         >
           <div className="flex items-center gap-2">
             <span className="text-zinc-300">{formatStartedAt(entry.startedAtMs)}</span>
@@ -143,7 +143,8 @@ function HistoryList({ history, onClear }: { history: WorkoutSummary[]; onClear:
 const CONTROL_STYLES = {
   primary:
     'from-emerald-400 to-teal-500 text-emerald-950 shadow-[0_10px_26px_-12px_rgba(52,211,153,0.9)]',
-  muted: 'bg-zinc-800/80 text-zinc-100 hover:bg-zinc-700/80',
+  muted:
+    'from-amber-400 to-orange-400 text-amber-950 shadow-[0_10px_26px_-12px_rgba(251,146,60,0.9)]',
   danger: 'from-rose-500 to-red-500 text-white shadow-[0_10px_26px_-12px_rgba(244,63,94,0.9)]',
 } as const
 
@@ -183,7 +184,7 @@ function ControlButton({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-bold transition-all hover:brightness-110 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none disabled:hover:brightness-100 ${variant === 'muted' ? '' : 'bg-gradient-to-r'} ${CONTROL_STYLES[variant]}`}
+      className={`inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r px-4 py-2 text-xs font-bold transition-all hover:brightness-110 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none disabled:hover:brightness-100 ${CONTROL_STYLES[variant]}`}
     >
       {icon && icons[icon]}
       {label}
@@ -214,10 +215,24 @@ export const WorkoutPanel = memo(function WorkoutPanel({
 
   return (
     <section className={`glass flex min-h-0 w-full flex-col rounded-3xl p-4 ${className}`}>
-      <div className="flex shrink-0 items-center justify-between gap-2 px-1">
+      <div className="flex items-center justify-between gap-2 px-1">
         <div className="flex items-center gap-2">
-          <span className="size-2 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 shadow-[0_0_10px_rgba(52,211,153,0.8)]" />
-          <h2 className="text-xs font-bold uppercase tracking-[0.18em] text-zinc-300">
+          <span className="flex size-5 items-center justify-center rounded-md bg-gradient-to-br from-emerald-400 to-teal-500 shadow-[0_0_14px_-2px_rgba(52,211,153,0.8)]">
+            <svg
+              viewBox="0 0 24 24"
+              className="size-3 text-zinc-950"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="13" r="8" />
+              <path d="M12 9v4l2.5 2.5M9 2h6" />
+            </svg>
+          </span>
+          <h2 className="text-xs font-bold uppercase tracking-[0.18em] text-zinc-200">
             Workout session
           </h2>
         </div>
@@ -227,7 +242,7 @@ export const WorkoutPanel = memo(function WorkoutPanel({
       </div>
 
       <div className="mt-3 flex min-h-0 flex-1 flex-col gap-3">
-        <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/5 bg-zinc-950/40 px-4 py-3">
+        <div className="flex items-center justify-between gap-3 rounded-2xl border border-emerald-500/20 bg-emerald-950/20 px-4 py-3 shadow-[inset_0_1px_0_rgba(52,211,153,0.1)]">
           <div className="flex flex-col">
             <p
               className={`font-mono text-3xl font-black tabular-nums leading-none tracking-tight ${
