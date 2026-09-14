@@ -6,6 +6,10 @@ Runs 100% in the browser. No paid APIs. No cloud AI services. No backend.
 
 Released under the [MIT License](LICENSE).
 
+## Preview
+
+![AI Boxing Trainer preview](src/assets/AI-Boxing-Trainer-09-15-2026_03_12_AM.png)
+
 ## Stack
 
 - React 19 + TypeScript (strict)
