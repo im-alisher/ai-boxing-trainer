@@ -138,7 +138,7 @@ export function PunchEffectsOverlay({
 
     animationFrameId = requestAnimationFrame(render)
     return () => cancelAnimationFrame(animationFrameId)
-  }, [videoRef])
+  }, [mirror, videoRef])
 
   return <canvas ref={canvasRef} className={`pointer-events-none ${className}`} />
 }
