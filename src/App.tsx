@@ -1,3 +1,4 @@
+import { PunchHud } from '@/features/hud/PunchHud'
 import { PunchMetricsPanel } from '@/features/metrics/PunchMetricsPanel'
 import { PoseOverlay } from '@/features/pose/PoseOverlay'
 import { WebcamView } from '@/features/webcam/WebcamView'
@@ -61,6 +62,13 @@ function App() {
               landmarks={landmarks}
               videoRef={videoRef}
               className="absolute inset-0 rounded-2xl"
+            />
+          )}
+          {isReady && (
+            <PunchHud
+              metrics={metrics.metrics}
+              lastPunch={punches[0] ?? null}
+              className="rounded-2xl"
             />
           )}
         </div>

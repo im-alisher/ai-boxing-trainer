@@ -8,6 +8,31 @@
     'JetBrains Mono', ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace;
 }
 
+@theme {
+  --animate-hud-pop: hud-pop 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-hud-flash: hud-flash 0.9s ease-out;
+
+  @keyframes hud-pop {
+    from {
+      transform: scale(0.6);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes hud-flash {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+}
+
 :root {
   color-scheme: dark;
 }
